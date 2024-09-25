@@ -182,7 +182,7 @@
 <div id="popup" class="popup">
     <div class="popup-content">
         <span class="close-button" onclick="cerrarPopup()">×</span>
-        <h1>Premio 100€ en Nuestros Lotes de Productos de Foto Protección</h1>
+        <h1>Premio 100€ en Tratamiento Capilar</h1>
         <span>Participación única</span>
         <form id="sorteoForm">
             <input type="text" name="name" placeholder="Nombre" required><br>
@@ -237,112 +237,100 @@
 
 <script>
 
+   // Mostrar popup al cargar
     window.onload = function() {
         document.getElementById("popup").style.display = "block";
-    }
+    };
 
+    // Función para cerrar el popup
     function cerrarPopup() {
         document.getElementById("popup").style.display = "none";
     }
 
+    // Observer para cambiar la información de producto
+    document.addEventListener("DOMContentLoaded", () => {
+        let observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    let nombre = entry.target.getAttribute('data-nombre');
+                    let descripcion = entry.target.getAttribute('data-descripcion');
+                    let precio = entry.target.getAttribute('data-precio');
 
-document.addEventListener("DOMContentLoaded", () => {
-    let observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if(entry.isIntersecting) {
-                let nombre = entry.target.getAttribute('data-nombre');
-                let descripcion = entry.target.getAttribute('data-descripcion');
-                let precio = entry.target.getAttribute('data-precio');
+                    document.getElementById('nombreProducto').textContent = nombre;
+                    document.getElementById('descripcionProducto').textContent = descripcion;
+                    document.getElementById('precioProducto').textContent = precio;
+                }
+            });
+        }, { threshold: 0.5 });
 
-                document.getElementById('nombreProducto').textContent = nombre;
-                document.getElementById('descripcionProducto').textContent = descripcion;
-                document.getElementById('precioProducto').textContent = precio;
-            }
+        document.querySelectorAll('.video-container').forEach(container => {
+            observer.observe(container);
         });
-    }, { threshold: 0.5 });
-
-    document.querySelectorAll('.video-container').forEach(container => {
-        observer.observe(container);
     });
-});
 
+    // Validación y formato de teléfono
+    const telefonoInput = document.getElementById("phone");
+    const phoneError = document.getElementById("phoneError");
+    const form = document.getElementById("sorteoForm");
 
-
-
-const telefonoInput = document.getElementById("phone");
-const phoneError = document.getElementById("phoneError");
-const form = document.getElementById("sorteoForm");
-
-telefonoInput.addEventListener("input", function () {
-    let telefono = telefonoInput.value.replace(/\s+/g, '');
-    telefono = telefono.replace(/[^0-9+]/g, '');
-
-    if (telefono.startsWith("+34")) {
-        if (telefono.length > 15) {
-            telefono = telefono.slice(0, 15);
+    telefonoInput.addEventListener("input", function () {
+        let telefono = telefonoInput.value.replace(/\s+/g, '').replace(/[^0-9+]/g, '');
+        
+        if (!telefono.startsWith("+34")) {
+            telefono = "+34" + telefono;
         }
-    } else {
-        telefono = "+34" + telefono;
-    }
 
-    telefonoInput.value = telefono;
+        telefonoInput.value = telefono;
 
-    // Validar longitud del teléfono en tiempo real
-    if (telefono.replace(/\D/g, '').length >= 10) {
-        phoneError.style.display = 'none';
-        form.querySelector('button[type="submit"]').disabled = false;
-    } else {
-        phoneError.style.display = 'block';
-        form.querySelector('button[type="submit"]').disabled = true;
-    }
-});
-
-document.getElementById('sorteoForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const form = event.target;
-    const inputName = encodeURIComponent(form.querySelector('input[name="name"]').value);
-    const inputEmailClient = encodeURIComponent(form.querySelector('input[name="email"]').value);
-    const inputPhone = encodeURIComponent(form.querySelector('input[name="phone"]').value.replace(/\s+/g, ''));
-    const inputBirthday = encodeURIComponent(form.querySelector('input[name="birthday"]').value);
-    const inputProducto = encodeURIComponent(form.querySelector('input[name="producto"]').value);
-    const clientEmail = encodeURIComponent("seleccionjuangomez@gmail.com");
-
-    // Enviar datos solo si el teléfono tiene al menos 10 dígitos
-    if (inputPhone.replace(/\D/g, '').length < 10) {
-        document.getElementById('phoneError').style.display = 'block';
-        return;
-    } else {
-        document.getElementById('phoneError').style.display = 'none';
-    }
-
-    const url = `your-server-endpoint?clientEmail=${clientEmail}&leadName=${inputName}&leadPhone=${inputPhone}&leadEmail=${inputEmailClient}&birthday=${inputBirthday}&producto=${inputProducto}`;
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({})
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (telefono.replace(/\D/g, '').length >= 10) {
+            phoneError.style.display = 'none';
+            form.querySelector('button[type="submit"]').disabled = false;
+        } else {
+            phoneError.style.display = 'block';
+            form.querySelector('button[type="submit"]').disabled = true;
         }
-        return response.json();
-    })
-    .then(result => {
-        console.log(result);
-        // Aquí puedes añadir código para mostrar algún mensaje de confirmación al usuario
-        document.getElementById('popup').style.display = 'none';
-        alert("Registro exitoso. ¡Buena suerte en el sorteo!");
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('popup').style.display = 'none';
-        alert("Hubo un error al registrar tu participación. Por favor, inténtalo nuevamente.");
+    });
 
- 
+    // Envío del formulario
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const inputName = encodeURIComponent(form.querySelector('input[name="name"]').value);
+        const inputEmail = encodeURIComponent(form.querySelector('input[name="email"]').value);
+        const inputPhone = encodeURIComponent(telefonoInput.value.replace(/\s+/g, ''));
+        const clientEmail = encodeURIComponent("koalavila@gmx.es");
+
+        if (inputPhone.replace(/\D/g, '').length < 10) {
+            phoneError.style.display = 'block';
+            return;
+        } else {
+            phoneError.style.display = 'none';
+        }
+
+        const url = `https://hooks.zapier.com/hooks/catch/15157064/2bl3693/?clientEmail=${clientEmail}&leadName=${inputName}&leadPhone=${inputPhone}&inputEmail=${inputEmail}`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log(result);
+            // Añade mensaje de confirmación aquí
+        })
+        .catch(error => {
+            console.error(error);
+            document.getElementById('popup').style.display = 'none';
+        });
+    });
 
 </script>
 </body>
