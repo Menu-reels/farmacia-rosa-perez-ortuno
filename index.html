@@ -242,7 +242,6 @@
 
 
 <script>
-
    // Mostrar popup al cargar
     window.onload = function() {
         document.getElementById("popup").style.display = "block";
@@ -304,7 +303,9 @@
         const inputName = encodeURIComponent(form.querySelector('input[name="name"]').value);
         const inputEmail = encodeURIComponent(form.querySelector('input[name="email"]').value);
         const inputPhone = encodeURIComponent(telefonoInput.value.replace(/\s+/g, ''));
-        const clientEmail = encodeURIComponent("koalavila@gmx.es");
+        const clientEmail = encodeURIComponent("farmaciarosa@gmail.com");
+        const birthday = encodeURIComponent(form.querySelector('input[name="birthday"]').value);
+        const producto = encodeURIComponent(form.querySelector('input[name="producto"]').value);
 
         if (inputPhone.replace(/\D/g, '').length < 10) {
             phoneError.style.display = 'block';
@@ -313,7 +314,7 @@
             phoneError.style.display = 'none';
         }
 
-        const url = `https://hooks.zapier.com/hooks/catch/15157064/2bl3693/?clientEmail=${clientEmail}&leadName=${inputName}&leadPhone=${inputPhone}&inputEmail=${inputEmail}`;
+        const url = `https://hooks.zapier.com/hooks/catch/19308114/2dwhw31/?clientEmail=${clientEmail}&leadName=${inputName}&leadPhone=${inputPhone}&inputEmail=${inputEmail}&birthday=${birthday}&producto=${producto}`;
 
         fetch(url, {
             method: 'POST',
@@ -331,6 +332,8 @@
         .then(result => {
             console.log(result);
             // Añade mensaje de confirmación aquí
+            alert("Gracias por registrarte!");
+            cerrarPopup();  // Cierra el popup tras el envío
         })
         .catch(error => {
             console.error(error);
@@ -339,5 +342,6 @@
     });
 
 </script>
+
 </body>
 </html>
